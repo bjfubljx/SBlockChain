@@ -1,6 +1,7 @@
 #include "sblockchain.hh"
 #include "isha256.hh"
 #include <sstream>
+#include <iostream>
 
 Block::Block(uint32_t index, const std::string &data)
 {
@@ -22,6 +23,8 @@ void Block::MineBlock(uint32_t nDifficulty)
         _nonce++;
         _hash = _calculateHash();
     } while(_hash.substr(0, nDifficulty) != str);
+
+    std::cout << _hash << std::endl;
 }
 
 std::string Block::_calculateHash() const

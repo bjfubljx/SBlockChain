@@ -29,7 +29,7 @@ private:
     Block _GetLastBlock() const;
 
 public:
-    BlockChain(bool is_genesis, uint32_t nDifficulty);
+    BlockChain(bool is_genesis, uint32_t nDifficulty = 5);
 
     void AddBlock(Block b);
 };
