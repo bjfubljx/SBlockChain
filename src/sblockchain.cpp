@@ -34,6 +34,19 @@ std::string Block::_calculateHash() const
     return sha256(ss.str());
 }
 
+Block::Block(const std::string &str)
+{
+    std::stringstream ss(str);
+    ss >> _index >> _time >> _data >> _nonce;
+}
+
+std::string Block::ToString()
+{
+    std::stringstream ss;
+    ss << _index << " " << _time << " " <<  _data << " " << _nonce;
+    return ss.str();
+}
+
 BlockChain::BlockChain(bool is_genesis, uint32_t nDifficulty) {
     _nDifficulty = nDifficulty;
     if(is_genesis) {
@@ -53,4 +66,9 @@ void BlockChain::AddBlock(Block b)
 Block BlockChain::_GetLastBlock() const
 {
     return _chain.back();
+}
+
+int BlockChain::len()
+{
+    return _chain.size();
 }

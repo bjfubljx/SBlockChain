@@ -7,6 +7,14 @@
 #include "sblockchain.hh"
 #include "handy.h"
 
+#define T_INT 0
+#define T_INTACK 1
+#define T_CHK 2
+#define T_BLK 3
+#define T_BC_REQ 4
+#define T_BC_RES 5
+
+
 class Check {
 private:
     uint8_t _from;
@@ -34,10 +42,11 @@ public:
 class Node {
 public:
     uint8_t id;
-    std::map<uint8_t, std::pair<std::string, int>> peers;
+    std::string ip;
+    std::map<uint8_t, std::pair<std::string, uint16_t>> peers;
     BlockChain *bc;
-    void AddPeer(uint8_t _id, std::string _ip, int _port);
-    Node(uint8_t _id, std::string _ip, int _port);
+    void AddPeer(uint8_t _id, std::string _ip, uint16_t _port);
+    Node(uint8_t _id, std::string _ip, uint16_t _port);
     void init(bool is_genesis);
     void run();
 
@@ -47,11 +56,15 @@ public:
         MINE
     } _state;
 
-private:
     handy::EventLoop *loop;
     handy::TcpServer *server;
     int _wallet = 0;
     std::shared_ptr<handy::Timer> mine_check_timer;
     std::shared_ptr<handy::Timer> mine_timeout_timer;
+
     std::vector<Check> checks;
+    void MineBlock();
+    void Broadcast(const std::string &msg, uint8_t type);
+    void AddCheck(Check chk);
+
 };

@@ -199,4 +199,49 @@ namespace handy {
             createcb_(conns_map[cfd].get());
         }
     }
+
+    TcpClient::TcpClient(const std::string &host, unsigned short port, const std::string &localip)
+    {
+        auto peer_addr = IPv4Addr(host, port);
+        fd = socket(AF_INET, SOCK_STREAM, 0);
+        int flags = fcntl(fd, F_GETFL, 0);
+        fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+        int r = 0;
+        if(localip.size()) {
+            auto local_addr = IPv4Addr(localip, 0);
+            r = bind(fd, (struct sockaddr *) &local_addr.addr_, sizeof(struct sockaddr));
+        }
+        if(!r) {
+            r = ::connect(fd, (struct sockaddr *) &peer_addr.addr_, sizeof(struct sockaddr));
+        }
+        if(r == 0) {
+            // connect error
+            return;
+        }
+    }
+
+    int TcpClient::send(const std::string &msg)
+    {
+        int len = msg.size();
+        int pos = 0;
+        while(len) {
+            std::string buff = msg.substr(pos, 4096);
+            auto sended = write(fd, buff.c_str(), buff.size());
+            if (sended > 0) {
+                pos += sended;
+                len -= sended;
+            } else if (sended == -1 && errno == EINTR) {
+                continue;
+            } else if (sended == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)) {
+                break;
+            } else {
+                
+            }
+        }
+    }
+
+    TcpClient::~TcpClient()
+    {
+        shutdown(fd, SHUT_RDWR);
+    }
 }
