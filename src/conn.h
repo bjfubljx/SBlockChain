@@ -78,7 +78,7 @@ namespace handy
                 errcb_(this); 
                 cleanup(this);
             }
-        private: 
+         
             void cleanup(TcpConn * con);
     };
 
@@ -120,6 +120,14 @@ namespace handy
             void OnConnMsg(const TcpDataCallBack &cb) {
                 msgcb_ = cb;
             }
+    };
+
+    class TcpClient {
+    public:
+        int fd;
+        TcpClient(const std::string &host, unsigned short port, const std::string &localip);
+        int send(const std::string &msg);
+        ~TcpClient();
     };
 } // namespace handy
 
